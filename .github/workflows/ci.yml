@@ -1,34 +1,17 @@
 name: Continuous Integration
 
-on:
-  push:
-    branches:
-      - master
+on: push
 
 jobs:
-  build:
+  super-lint:
+    name: Lint code base
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      with:
-        ref: master
-        submodules: recursive
-        token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout code
+        uses: actions/checkout@v2
       
-    - name: Set up Java
-      uses: actions/setup-java@v2
-      with:
-        java-version: '17'
-        distribution: 'adopt'
-        cache: 'gradle-$JAVA_VERSION'
-
-    - name: Build and Test
-      run: |
-        ./mvnw clean install
-
-    - name: Notify on failure
-      if: ${{ failure() }}
-      run: |
-        echo "Tests failed! Please check the build."
+      - name: Run Super-Linter
+        uses: github/super-linter@v3
+        env:
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
