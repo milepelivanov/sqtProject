@@ -20,9 +20,14 @@ jobs:
     - name: Set up Java
       uses: actions/setup-java@v2
       with:
-        java-version: '17'
-        distribution: 'corretto'
-        cache: 'corretto-$JAVA_VERSION'
+        java-version: '16' # Use OpenJDK 16 for initial setup
+
+    - name: Install Corretto 17
+      run: |
+        wget https://corretto.aws/downloads/latest/amazon-corretto-17-x64-linux-jdk.tar.gz
+        tar -xzf amazon-corretto-17-x64-linux-jdk.tar.gz
+        export JAVA_HOME=$(pwd)/amazon-corretto-17.x.x.x-xxx
+        export PATH=$JAVA_HOME/bin:$PATH
 
     - name: Build and Test
       run: |
