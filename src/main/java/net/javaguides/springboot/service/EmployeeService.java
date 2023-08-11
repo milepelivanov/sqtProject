@@ -16,4 +16,6 @@ public interface EmployeeService {
 
 	boolean canHaveBonusDays(Employee employee);
 
+	
+
 }
