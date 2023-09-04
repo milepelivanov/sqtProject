@@ -25,15 +25,20 @@ public class EmployeeControllerSeleniumTest {
     private static ApplicationRunner applicationRunner;
     private static ConfigurableApplicationContext applicationContext;
 
-    private ApplicationArguments applicationArguments;
+    private static ApplicationArguments applicationArguments;
 
-
-    @BeforeEach
-    public void init() throws InstantiationException, IllegalAccessException {
+    @BeforeAll
+    public static void setupApplicationContext() throws Exception {
+        applicationArguments = new DefaultApplicationArguments(new String[]{});
         applicationRunner = args -> {
             applicationContext = SpringApplication.run(SpringbootThymeleafCrudWebAppApplication.class, args.getSourceArgs());
         };
-        applicationArguments = new DefaultApplicationArguments(new String[]{});
+        applicationRunner.run(applicationArguments);
+    }
+
+    @BeforeEach
+    public void init() {
+
 
         System.setProperty("webdriver.gecko.driver", "./src/main/resources/driver/geckodriver.exe");
         driver = new FirefoxDriver();
@@ -44,17 +49,18 @@ public class EmployeeControllerSeleniumTest {
         if (driver != null) {
             driver.quit();
         }
+
+    }
+
+    @AfterAll
+    public static void closeApp() {
         if (applicationContext != null) {
-            SpringApplication.exit(applicationContext);
+            SpringApplication.exit(applicationContext, () -> 0);
         }
     }
 
-
-
-
     @Test
     public void saveEmployeeTest() throws Exception {
-        applicationRunner.run(applicationArguments);
         driver.get("http://localhost:8080");
         List<WebElement> rows = driver.findElements(By.cssSelector("body > div > table > tbody > tr"));
         int start_number = rows.size();
@@ -100,7 +106,7 @@ public class EmployeeControllerSeleniumTest {
 
     @Test
     public void deleteEmployeeTest() throws Exception {
-        applicationRunner.run(applicationArguments);
+
         int number;
         boolean foundTest = false;
         int start_number_occurrence = 0, end_number_occurrence = 0;
@@ -183,7 +189,6 @@ public class EmployeeControllerSeleniumTest {
 
     @Test
     public void editEmployeeTest() throws Exception {
-        applicationRunner.run(applicationArguments);
         driver.get("http://localhost:8080");
 
         driver.findElement(By.linkText("Add Employee")).click();
