@@ -17,53 +17,54 @@ import net.javaguides.springboot.repository.EmployeeRepository;
 public class EmployeeServiceImpl implements EmployeeService {
 
 
-	private final EmployeeRepository employeeRepository;
+    private final EmployeeRepository employeeRepository;
 
-	public EmployeeServiceImpl(EmployeeRepository employeeRepository){
-		this.employeeRepository = employeeRepository;
-	}
-	@Override
-	public List<Employee> getAllEmployees() {
-		//return employeeRepository.findAll();
-		return null;
-	}
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
 
-	@Override
-	public Employee saveEmployee(Employee employee) {
-		return this.employeeRepository.save(employee);
-	}
+    @Override
+    public List<Employee> getAllEmployees() {
+        return employeeRepository.findAll();
+        //return null;
+    }
 
-	@Override
-	public Employee getEmployeeById(long id) {
-		Optional<Employee> optional = employeeRepository.findById(id);
-		Employee employee = null;
-		if (optional.isPresent()) {
-			employee = optional.get();
-		} else {
-			throw new RuntimeException(" Employee not found for id :: " + id);
-		}
-		return employee;
-	}
+    @Override
+    public Employee saveEmployee(Employee employee) {
+        return this.employeeRepository.save(employee);
+    }
 
-	@Override
-	public Employee deleteEmployeeById(long id) {
-		Employee employee = this.getEmployeeById(id);
-		this.employeeRepository.deleteById(id);
-		return employee;
-	}
+    @Override
+    public Employee getEmployeeById(long id) {
+        Optional<Employee> optional = employeeRepository.findById(id);
+        Employee employee = null;
+        if (optional.isPresent()) {
+            employee = optional.get();
+        } else {
+            throw new RuntimeException(" Employee not found for id :: " + id);
+        }
+        return employee;
+    }
 
-	@Override
-	public Page<Employee> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection) {
-		Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() :
-			Sort.by(sortField).descending();
-		
-		Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
-		return this.employeeRepository.findAll(pageable);
-	}
+    @Override
+    public Employee deleteEmployeeById(long id) {
+        Employee employee = this.getEmployeeById(id);
+        this.employeeRepository.deleteById(id);
+        return employee;
+    }
 
-	@Override
-	public boolean canHaveBonusDays(Employee employee) {
-		return (employee.getSalary() > 10000 && employee.isPartTime()) || employee.getDepartment().equals("IT");
+    @Override
+    public Page<Employee> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() :
+                Sort.by(sortField).descending();
 
-	}
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+        return this.employeeRepository.findAll(pageable);
+    }
+
+    @Override
+    public boolean canHaveBonusDays(Employee employee) {
+        return (employee.getSalary() > 10000 && employee.isPartTime()) || employee.getDepartment().equals("IT");
+
+    }
 }
