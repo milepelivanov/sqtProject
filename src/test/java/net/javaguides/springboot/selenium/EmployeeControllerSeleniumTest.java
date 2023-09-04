@@ -1,11 +1,17 @@
 package net.javaguides.springboot.selenium;
 
 
+import net.javaguides.springboot.SpringbootThymeleafCrudWebAppApplication;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.DefaultApplicationArguments;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.List;
 
@@ -16,9 +22,19 @@ import static org.junit.jupiter.api.Assertions.*;
 public class EmployeeControllerSeleniumTest {
 
     private WebDriver driver;
+    private static ApplicationRunner applicationRunner;
+    private static ConfigurableApplicationContext applicationContext;
+
+    private ApplicationArguments applicationArguments;
+
 
     @BeforeEach
     public void init() throws InstantiationException, IllegalAccessException {
+        applicationRunner = args -> {
+            applicationContext = SpringApplication.run(SpringbootThymeleafCrudWebAppApplication.class, args.getSourceArgs());
+        };
+        applicationArguments = new DefaultApplicationArguments(new String[]{});
+
         System.setProperty("webdriver.gecko.driver", "./src/main/resources/driver/geckodriver.exe");
         driver = new FirefoxDriver();
     }
@@ -28,11 +44,17 @@ public class EmployeeControllerSeleniumTest {
         if (driver != null) {
             driver.quit();
         }
+        if (applicationContext != null) {
+            SpringApplication.exit(applicationContext);
+        }
     }
 
 
+
+
     @Test
-    public void saveEmployeeTest() {
+    public void saveEmployeeTest() throws Exception {
+        applicationRunner.run(applicationArguments);
         driver.get("http://localhost:8080");
         List<WebElement> rows = driver.findElements(By.cssSelector("body > div > table > tbody > tr"));
         int start_number = rows.size();
@@ -77,8 +99,8 @@ public class EmployeeControllerSeleniumTest {
 
 
     @Test
-    public void deleteEmployeeTest() {
-
+    public void deleteEmployeeTest() throws Exception {
+        applicationRunner.run(applicationArguments);
         int number;
         boolean foundTest = false;
         int start_number_occurrence = 0, end_number_occurrence = 0;
@@ -160,7 +182,8 @@ public class EmployeeControllerSeleniumTest {
     }
 
     @Test
-    public void editEmployeeTest() {
+    public void editEmployeeTest() throws Exception {
+        applicationRunner.run(applicationArguments);
         driver.get("http://localhost:8080");
 
         driver.findElement(By.linkText("Add Employee")).click();
