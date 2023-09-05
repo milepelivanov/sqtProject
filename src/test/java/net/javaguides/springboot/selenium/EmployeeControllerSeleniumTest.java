@@ -38,8 +38,6 @@ public class EmployeeControllerSeleniumTest {
 
     @BeforeEach
     public void init() {
-
-
         System.setProperty("webdriver.gecko.driver", "./src/main/resources/driver/geckodriver.exe");
         driver = new FirefoxDriver();
     }
